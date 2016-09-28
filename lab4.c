@@ -1,9 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-
-int numElements;//made this a global variable as it is used in almost every function, note it is only actually set once and should cause no overlap issues
+#include "head.h"
+//made this a global variable as it is used in almost every function, note it is only actually set once and should cause no overlap issues
 
 
 int* openFile(int fileChoice);
@@ -14,10 +10,12 @@ double meanFunction(double* arrayPtr);
 double maximumFunction(double* arrayPtr);
 void centerFunction(double* arrayPtr,double mean,int fileChoice);
 void normalizeFunction(double* arrayPtr,int fileChoice);
+void lab5(int argc,char* argv[]);
 
-
-int main (void)
+int main (int argc,char* argv[])
 {
+    lab5(argc,argv);
+    return 1;
     double mean;	//data type double for the information we will be gathering
     double maximum;
     double offsetValue;
@@ -225,6 +223,7 @@ void centerFunction(double* arrayPtr,double mean,int fileChoice)//functionality 
 }
 double meanFunction(double* arrayPtr)//sums each element in the array and divides by the num of elements to return the mean of the data
 {
+	double* startPtr = arrayPtr;
 	double mean;
 	int i=1;
 	double total = 0;
@@ -237,14 +236,17 @@ double meanFunction(double* arrayPtr)//sums each element in the array and divide
 		arrayPtr++;
 	}
 	mean = total / (double)numElements;//needed to typecast the num of elements as it is an integer and division would not work right otherwise 
+	arrayPtr = startPtr;
 	return mean;
 }
 double maximumFunction(double* arrayPtr)//finds the maximum value in the array and returns a double
 {
-	int i;
+	double* startPtr = arrayPtr;
+	int i = 1;
 	double maximumVal=0;
 	arrayPtr++;
 	arrayPtr++;
+	
 	while(i <= numElements)
 	{
 		if(maximumVal < *arrayPtr)
@@ -254,6 +256,8 @@ double maximumFunction(double* arrayPtr)//finds the maximum value in the array a
 		arrayPtr++;
 		i++;
 	}
+	printf("max is %lf\n",maximumVal);
+	arrayPtr = startPtr;
 	return maximumVal;
 }
 
@@ -276,7 +280,8 @@ double* offsetFile(double* arrayPtr,double offsetValue)//offset file will change
 		i++;
 	}
 	printf("finished offsetting\n");
-	return startPtr;
+	arrayPtr = startPtr;
+	return arrayPtr;
 }
 double* scaleFile(double* arrayPtr,double scaleValue)//same functionality as offsetfile
 {
@@ -312,13 +317,16 @@ void writeToFile(double* arrayPtr,char* string,int fileChoice)//this function wr
 		sprintf(fileString,"%s_data_%d.txt",string,fileChoice);
 	}
 	int i;
+	printf("test1: %s \n",fileString);
         FILE* fp = fopen(fileString,"w");
+	printf("test2\n");
         fprintf(fp,"%lf ",*arrayPtr);
 	numElements = (int)*arrayPtr;
 	//printf("num elements is %d\n",numElements);
         arrayPtr++;
         fprintf(fp,"%lf\n",*arrayPtr);
 	arrayPtr++;
+	
 	while(i < numElements)
 	{
 		fprintf(fp,"%lf\n",*arrayPtr);	
