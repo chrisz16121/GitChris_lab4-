@@ -8,13 +8,13 @@ double* offsetFile(double* arrayPtr,double offsetValue);
 double* scaleFile(double* arrayPtr,double offsetVlaue);
 double meanFunction(double* arrayPtr);
 double maximumFunction(double* arrayPtr);
-void centerFunction(double* arrayPtr,double mean,int fileChoice);
-void normalizeFunction(double* arrayPtr,int fileChoice);
+void centerFunction(double* arrayPtr,double mean,int fileChoice,char* centerFileString);
+void normalizeFunction(double* arrayPtr,int fileChoice,char* normalFileString);
 void lab5(int argc,char* argv[]);
 
 int main (int argc,char* argv[])
 {
-    lab5(argc,argv);
+    lab5(argc,argv);//these two lines of code essentially make lab4.c: main() useless, but i can still use the functions in here to implement lab5
     return 1;
     double mean;	//data type double for the information we will be gathering
     double maximum;
@@ -146,11 +146,11 @@ int main (int argc,char* argv[])
 		fprintf(statFile,"%lf	%lf",mean,maximum);
 		fclose(statFile);
 		printf("Statistics for file %d can be found in %s\nCentering the signal %s file %d..........",fileChoice,statFileString,string,fileChoice);
-		centerFunction(doublePtr,mean,fileChoice);
+		//centerFunction(doublePtr,mean,fileChoice);
 		doublePtr = startDouble;
 		//centered file will be written in center
 		printf("Normalizing the signal %s file %d..........",string,fileChoice);
-		normalizeFunction(doublePtr,fileChoice);
+		//normalizeFunction(doublePtr,fileChoice);
 		doublePtr = startDouble;
 		//normalized file will be written in normalize
 		free(arrayPtr);//freeing both of the arrays that had been malloced throughout the program, note that each array that was malloced has been freed, and every file opened has been closed
@@ -164,20 +164,11 @@ int main (int argc,char* argv[])
             return 0;
         }
 }
-void normalizeFunction(double* arrayPtr,int fileChoice)
+void normalizeFunction(double* arrayPtr,int fileChoice,char* normalFileString)
 {	
 	int i =1;
 	double maximum;
-	char normalizedString[50];
-	if(fileChoice < 10)
-	{
-		sprintf(normalizedString,"Normalized_data_0%d.txt",fileChoice);//again for the correct formatting 
-	}
-	else
-	{
-		sprintf(normalizedString,"Normalized_data_%d.txt",fileChoice);
-	}
-	FILE* fp = fopen(normalizedString,"w");//opens the normalize file 
+	FILE* fp = fopen(normalFileString,"w");//opens the normalize file 
 	fprintf(fp,"%lf",*arrayPtr);
 	arrayPtr++;
 	maximum = *arrayPtr;//using the maximum to normalize the data between 0 and 1, NOTE that the scaled values will between -1 and 1 if any negative values are present in the data files which i did not see
@@ -190,23 +181,13 @@ void normalizeFunction(double* arrayPtr,int fileChoice)
 		i++;
 	}
 	fclose(fp);//file closed
-	printf("normalized signal can be found in %s\n",normalizedString);
 	return;
 }
 
-void centerFunction(double* arrayPtr,double mean,int fileChoice)//functionality of center function is the same except it subtracts the mean from each element in the array and writes it to a different file
+void centerFunction(double* arrayPtr,double mean,int fileChoice,char* centerFileString)//functionality of center function is the same except it subtracts the mean from each element in the array and writes it to a different file
 {	
 	int i =1;
-	char centeredString[50];
-	if(fileChoice < 10)
-	{
-		sprintf(centeredString,"Centered_data_0%d.txt",fileChoice);
-	}
-	else
-	{
-		sprintf(centeredString,"Centered_data_%d.txt",fileChoice);
-	}
-	FILE* fp = fopen(centeredString,"w");
+	FILE* fp = fopen(centerFileString,"w");
 	fprintf(fp,"%lf ",*arrayPtr);
 	arrayPtr++;
 	fprintf(fp,"%lf\n",*arrayPtr - mean);
@@ -218,7 +199,6 @@ void centerFunction(double* arrayPtr,double mean,int fileChoice)//functionality 
 		i++;
 	}
 	fclose(fp);
-	printf("centered signal can be found in %s\n",centeredString);
 	return;
 }
 double meanFunction(double* arrayPtr)//sums each element in the array and divides by the num of elements to return the mean of the data
@@ -256,7 +236,6 @@ double maximumFunction(double* arrayPtr)//finds the maximum value in the array a
 		arrayPtr++;
 		i++;
 	}
-	printf("max is %lf\n",maximumVal);
 	arrayPtr = startPtr;
 	return maximumVal;
 }
@@ -317,9 +296,9 @@ void writeToFile(double* arrayPtr,char* string,int fileChoice)//this function wr
 		sprintf(fileString,"%s_data_%d.txt",string,fileChoice);
 	}
 	int i;
-	printf("test1: %s \n",fileString);
+	//printf("test1: %s \n",fileString);
         FILE* fp = fopen(fileString,"w");
-	printf("test2\n");
+	//printf("test2\n");
         fprintf(fp,"%lf ",*arrayPtr);
 	numElements = (int)*arrayPtr;
 	//printf("num elements is %d\n",numElements);
@@ -359,7 +338,7 @@ int* openFile(int fileChoice)
 	printf("file opened\n");
 
     fscanf(fp,"%d %d",&numElements,&maxValue);
-    printf("there are %d elements in file %d\nand the max value is %d\n",numElements,fileChoice,maxValue);//just a check to see if we opened the file right
+    printf("there are %d elements in file %d\nand the maximum value allowed is %d\n",numElements,fileChoice,maxValue);//just a check to see if we opened the file right
     int* arrayPtr = malloc((numElements+2)*sizeof(int*));//where the integer array is first malloced, this will be freed in main
     int* startPtr = arrayPtr;
     *arrayPtr = numElements;//getting the data from the file and storing it in numelements (global) as well as in the integer array as information
