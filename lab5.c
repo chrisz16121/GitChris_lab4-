@@ -37,18 +37,18 @@ void lab5(int argc,char* argv[])
 		{
 			if(i >= (argc-1))//ensures we dont run off the end of the argv[] array
 			{
-				printf("Please be sure to append a file number\n");
+				printf("WARNING: Please be sure to append a file number\n");
 			}
 			else
 			{
 				i++;
 				if(argv[i][0] == '-')//checks to see if they forgot to append a number before the next tag
 				{
-					printf("need a value appended after tag -n\n");
+					printf("WARNING: Need a value appended after tag -n\n");
 				}
 				if(atoi(argv[i]) < 1 || atoi(argv[i]) > 11)//range for valid files
 				{
-					printf("You did not enter a valid file number with your -n tag, program must terminate\n");
+					printf("WARNING: You did not enter a valid file number with your -n tag, program must terminate\n");
 					return;//will seg fault if we try to open a data file that dont exist
 				}
 				else
@@ -62,14 +62,15 @@ void lab5(int argc,char* argv[])
 		{
 			if(i >= (argc-1))//ensures we dont run off the end of the argv[] array
 			{
-				printf("did not provide an offset value\n");
+				printf("WARNING: Did not provide an offset value\n");
 			}
 			else
 			{
 				i++;
 				if(argv[i][0] == '-')
 				{
-					printf("need a value appended after tag -o\n");
+					printf("WARNING: Need a value appended after tag -o\n");
+					i--;
 				}
 				else
 				{
@@ -83,14 +84,15 @@ void lab5(int argc,char* argv[])
 		{
 			if(i >= (argc-1))//ensures we dont run off the end of the argv[] array
 			{
-				printf("did not provide an scale value\n");
+				printf("WARNING: did not provide an scale value\n");
 			}
 			else
 			{
 				i++;
 				if(argv[i][0] == '-')
 				{
-					printf("need a value appended after tag -s\n");
+					printf("WARNING: Need a value appended after tag -s\n");
+					i--;
 				}
 				else
 				{
@@ -117,10 +119,18 @@ void lab5(int argc,char* argv[])
 		}
 		else if((argv[i][0] == '-') && (argv[i][1] == 'r'))
 		{
-			i++;//gets the new name of the file that the user wants to write
-			newNameString = argv[i];
-			printf("You want to change the name of a file to %s\n",newNameString);
-			renameYes=1;
+			if(i >= (argc-1))
+			{
+				printf("WARNING: Did not provide a file name after -r tag\n");
+				i--;
+			}
+			else
+			{
+				i++;//gets the new name of the file that the user wants to write
+				newNameString = argv[i];
+				printf("You want to change the name of a file to %s\n",newNameString);
+				renameYes=1;
+			}
 		}
 		else	//this error check basically says that the program did not find a tag, simply bumps past the argument and gives the user a warning
 		{
@@ -130,7 +140,7 @@ void lab5(int argc,char* argv[])
 	}
 	if(fileNo == 0)//NO SEG FAULTS
 	{
-		printf("You did not provide any file number to work with, we cannot do anything until you provide a file no.\n");
+		printf("WARNING: You did not provide any file number to work with, we cannot do anything until you provide a file no.\n");
 		return;
 	}	
 	else
