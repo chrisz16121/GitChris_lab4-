@@ -24,6 +24,7 @@ void lab5(int argc,char* argv[])
 	char* string;
 	char normalFileString[50];
 	char centerFileString[50];
+	char renameFileString[50];
 
 	while(i < argc)//this loops steps through each command line argument and checks its syntax
 			//please note the truth value integers being set once a certain tag has been found
@@ -157,6 +158,26 @@ void lab5(int argc,char* argv[])
 			i++;				
 			doublePtr++;
 			arrayPtr++;
+		}
+		doublePtr = startDouble;
+		arrayPtr = startInt;
+		i=1;
+		if(renameYes ==1)//added this chunk during the lab, latest update
+		{
+			sprintf(renameFileString,"%s.txt",newNameString);
+			FILE* fp2 = fopen(renameFileString,"w");
+			fprintf(fp2,"%lf\t",*doublePtr);
+			doublePtr++;
+			fprintf(fp2,"%lf\n",*doublePtr);
+			doublePtr++;
+			while(i<numElements)
+			{
+				fprintf(fp2,"%lf\n",*doublePtr);
+				doublePtr++;
+				i++;
+			}
+			printf("copy of file was made in %s\n",renameFileString);
+			fclose(fp2);
 		}
 		doublePtr = startDouble;
 		arrayPtr = startInt;           
